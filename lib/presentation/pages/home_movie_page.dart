@@ -7,7 +7,10 @@ import 'package:ditonton/presentation/pages/top_rated_movies_page.dart';
 import 'package:ditonton/presentation/provider/movie_list_notifier.dart';
 import 'package:ditonton/common/state_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+
+import '../cubit/movie_list/movie_list_cubit.dart';
 
 class HomeMoviePage extends StatefulWidget {
   @override
@@ -20,11 +23,13 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-        () => Provider.of<MovieListNotifier>(context, listen: false)
-          ..fetchNowPlayingMovies()
-          ..fetchPopularMovies()
-          ..fetchTopRatedMovies());
+    // Future.microtask(
+    //     () => Provider.of<MovieListNotifier>(context, listen: false)
+    //       ..fetchNowPlayingMovies()
+    //       ..fetchPopularMovies()
+    //       ..fetchTopRatedMovies());
+
+    Future.microtask(() => context.read<MovieListCubit>().loadMovieList());
   }
 
   @override
@@ -39,52 +44,95 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
               'Now Playing',
               style: kHeading6,
             ),
-            Consumer<MovieListNotifier>(builder: (context, data, child) {
-              final state = data.nowPlayingState;
-              if (state == RequestState.Loading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state == RequestState.Loaded) {
-                return MovieList(data.nowPlayingMovies);
-              } else {
-                return Text('Failed');
-              }
-            }),
+            BlocBuilder<MovieListCubit, MovieListState>(
+              builder: (context, state) {
+                if (state is LoadedMovieListState) {
+                  if (state.nowPlaying.isEmpty) {
+                    return const Tooltip(
+                      message: 'error to load movies',
+                      child: Text('Failed'),
+                    );
+                  }
+                  return MovieList(state.nowPlaying);
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+
+            // Consumer<MovieListNotifier>(builder: (context, data, child) {
+            //   final state = data.nowPlayingState;
+            //   if (state == RequestState.Loading) {
+            //     return Center(
+            //       child: CircularProgressIndicator(),
+            //     );
+            //   } else if (state == RequestState.Loaded) {
+            //     return MovieList(data.nowPlayingMovies);
+            //   } else {
+            //     return Text('Failed');
+            //   }
+            // }),
             _buildSubHeading(
               title: 'Popular',
               onTap: () =>
                   Navigator.pushNamed(context, PopularMoviesPage.ROUTE_NAME),
             ),
-            Consumer<MovieListNotifier>(builder: (context, data, child) {
-              final state = data.popularMoviesState;
-              if (state == RequestState.Loading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state == RequestState.Loaded) {
-                return MovieList(data.popularMovies);
-              } else {
-                return Text('Failed');
-              }
-            }),
+            BlocBuilder<MovieListCubit, MovieListState>(
+              builder: (context, state) {
+                if (state is LoadedMovieListState) {
+                  if (state.popular.isEmpty) {
+                    return const Tooltip(
+                      message: 'error to load movies',
+                      child: Text('Failed'),
+                    );
+                  }
+                  return MovieList(state.popular);
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+            // Consumer<MovieListNotifier>(builder: (context, data, child) {
+            //   final state = data.popularMoviesState;
+            //   if (state == RequestState.Loading) {
+            //     return Center(
+            //       child: CircularProgressIndicator(),
+            //     );
+            //   } else if (state == RequestState.Loaded) {
+            //     return MovieList(data.popularMovies);
+            //   } else {
+            //     return Text('Failed');
+            //   }
+            // }),
             _buildSubHeading(
               title: 'Top Rated',
               onTap: () =>
                   Navigator.pushNamed(context, TopRatedMoviesPage.ROUTE_NAME),
             ),
-            Consumer<MovieListNotifier>(builder: (context, data, child) {
-              final state = data.topRatedMoviesState;
-              if (state == RequestState.Loading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state == RequestState.Loaded) {
-                return MovieList(data.topRatedMovies);
-              } else {
-                return Text('Failed');
-              }
-            }),
+            BlocBuilder<MovieListCubit, MovieListState>(
+              builder: (context, state) {
+                if (state is LoadedMovieListState) {
+                  if (state.topRated.isEmpty) {
+                    return const Tooltip(
+                      message: 'error to load movies',
+                      child: Text('Failed'),
+                    );
+                  }
+                  return MovieList(state.topRated);
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+            // Consumer<MovieListNotifier>(builder: (context, data, child) {
+            //   final state = data.topRatedMoviesState;
+            //   if (state == RequestState.Loading) {
+            //     return Center(
+            //       child: CircularProgressIndicator(),
+            //     );
+            //   } else if (state == RequestState.Loaded) {
+            //     return MovieList(data.topRatedMovies);
+            //   } else {
+            //     return Text('Failed');
+            //   }
+            // }),
           ],
         ),
       ),
