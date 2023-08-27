@@ -1,8 +1,18 @@
 import 'package:ditonton/common/constants.dart';
 import 'package:ditonton/common/utils.dart';
 import 'package:ditonton/presentation/bloc/search_movies/search_movies_bloc.dart';
+import 'package:ditonton/presentation/bloc/search_tv/search_tvs_bloc.dart';
 import 'package:ditonton/presentation/cubit/detail_movies/detail_movies_cubit.dart';
+import 'package:ditonton/presentation/cubit/detail_tv/detail_tv_cubit.dart';
 import 'package:ditonton/presentation/cubit/movie_list/movie_list_cubit.dart';
+import 'package:ditonton/presentation/cubit/now_playing_tv/now_playing_tvs_cubit.dart';
+import 'package:ditonton/presentation/cubit/popular_movies/popular_movies_cubit.dart';
+import 'package:ditonton/presentation/cubit/popular_tvs/popular_tvs_cubit.dart';
+import 'package:ditonton/presentation/cubit/top_rated_TV/top_rated_tvs_cubit.dart';
+import 'package:ditonton/presentation/cubit/top_rated_movies/top_rated_movies_cubit.dart';
+import 'package:ditonton/presentation/cubit/tv_list/tv_list_cubit.dart';
+import 'package:ditonton/presentation/cubit/watchlist_movies/watchlist_movies_cubit.dart';
+import 'package:ditonton/presentation/cubit/watchlist_tvs/watchlist_tvs_cubit.dart';
 import 'package:ditonton/presentation/pages/about_page.dart';
 import 'package:ditonton/presentation/pages/home_page.dart';
 import 'package:ditonton/presentation/pages/movie_detail_page.dart';
@@ -34,8 +44,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:ditonton/injection.dart' as di;
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   di.init();
   runApp(MyApp());
 }
@@ -95,6 +112,39 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<SearchMoviesBloc>(
           create: (_) => di.locator<SearchMoviesBloc>(),
+        ),
+        BlocProvider<TopRatedMoviesCubit>(
+          create: (_) => di.locator<TopRatedMoviesCubit>(),
+        ),
+        BlocProvider<PopularMoviesCubit>(
+          create: (_) => di.locator<PopularMoviesCubit>(),
+        ),
+        BlocProvider<WatchlistMoviesCubit>(
+          create: (_) => di.locator<WatchlistMoviesCubit>(),
+        ),
+        BlocProvider<TvListCubit>(
+          create: (_) => di.locator<TvListCubit>(),
+        ),
+        BlocProvider<PopularTvsCubit>(
+          create: (_) => di.locator<PopularTvsCubit>(),
+        ),
+        BlocProvider<DetailTvCubit>(
+          create: (_) => di.locator<DetailTvCubit>(),
+        ),
+        BlocProvider<SearchTvsBloc>(
+          create: (_) => di.locator<SearchTvsBloc>(),
+        ),
+        BlocProvider<TopRatedTvsCubit>(
+          create: (_) => di.locator<TopRatedTvsCubit>(),
+        ),
+        BlocProvider<PopularTvsCubit>(
+          create: (_) => di.locator<PopularTvsCubit>(),
+        ),
+        BlocProvider<WatchlistTvsCubit>(
+          create: (_) => di.locator<WatchlistTvsCubit>(),
+        ),
+        BlocProvider<NowPlayingTvsCubit>(
+          create: (_) => di.locator<NowPlayingTvsCubit>(),
         ),
       ],
       child: MaterialApp(

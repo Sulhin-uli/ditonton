@@ -28,8 +28,18 @@ import 'package:ditonton/domain/usecases/save_watchlist_tv.dart';
 import 'package:ditonton/domain/usecases/search_movies.dart';
 import 'package:ditonton/domain/usecases/search_tv.dart';
 import 'package:ditonton/presentation/bloc/search_movies/search_movies_bloc.dart';
+import 'package:ditonton/presentation/bloc/search_tv/search_tvs_bloc.dart';
 import 'package:ditonton/presentation/cubit/detail_movies/detail_movies_cubit.dart';
+import 'package:ditonton/presentation/cubit/detail_tv/detail_tv_cubit.dart';
 import 'package:ditonton/presentation/cubit/movie_list/movie_list_cubit.dart';
+import 'package:ditonton/presentation/cubit/now_playing_tv/now_playing_tvs_cubit.dart';
+import 'package:ditonton/presentation/cubit/popular_movies/popular_movies_cubit.dart';
+import 'package:ditonton/presentation/cubit/popular_tvs/popular_tvs_cubit.dart';
+import 'package:ditonton/presentation/cubit/top_rated_TV/top_rated_tvs_cubit.dart';
+import 'package:ditonton/presentation/cubit/top_rated_movies/top_rated_movies_cubit.dart';
+import 'package:ditonton/presentation/cubit/tv_list/tv_list_cubit.dart';
+import 'package:ditonton/presentation/cubit/watchlist_movies/watchlist_movies_cubit.dart';
+import 'package:ditonton/presentation/cubit/watchlist_tvs/watchlist_tvs_cubit.dart';
 // import 'package:ditonton/presentation/provider/movie_detail_notifier.dart';
 // import 'package:ditonton/presentation/provider/movie_list_notifier.dart';
 // import 'package:ditonton/presentation/provider/movie_search_notifier.dart';
@@ -157,6 +167,72 @@ void init() {
   locator.registerFactory(
     () => SearchMoviesBloc(
       locator<SearchMovies>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => TopRatedMoviesCubit(
+      getTopRatedMovies: locator<GetTopRatedMovies>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => PopularMoviesCubit(
+      getPopularMovies: locator<GetPopularMovies>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => WatchlistMoviesCubit(
+      getWatchlistMovies: locator<GetWatchlistMovies>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => PopularTvsCubit(
+      getPopularTvs: locator<GetPopularTV>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => TvListCubit(
+      getNowPlayingTvs: locator<GetNowPlayingTV>(),
+      getPopularTvs: locator<GetPopularTV>(),
+      getTopRatedTvs: locator<GetTopRatedTV>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => DetailTvCubit(
+      getTvDetail: locator<GetTvDetail>(),
+      getTvRecommendations: locator<GetTvRecommendations>(),
+      getWatchListStatus: locator<GetWatchListStatusTv>(),
+      saveWatchlist: locator<SaveWatchlistTv>(),
+      removeWatchlist: locator<RemoveWatchlistTv>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => SearchTvsBloc(
+      locator<SearchTv>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => TopRatedTvsCubit(
+      getTopRatedTvs: locator<GetTopRatedTV>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => NowPlayingTvsCubit(
+      getTopRatedTvs: locator<GetNowPlayingTV>(),
+    ),
+  );
+
+  locator.registerFactory(
+    () => WatchlistTvsCubit(
+      getWatchlistTvs: locator<GetWatchlistTv>(),
     ),
   );
 
