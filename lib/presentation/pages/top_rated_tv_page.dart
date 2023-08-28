@@ -1,9 +1,6 @@
-import 'package:ditonton/common/state_enum.dart';
 import 'package:ditonton/presentation/cubit/top_rated_TV/top_rated_tvs_cubit.dart';
-import 'package:ditonton/presentation/provider/top_rated_tv_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import '../widgets/tv_card_list.dart';
 
