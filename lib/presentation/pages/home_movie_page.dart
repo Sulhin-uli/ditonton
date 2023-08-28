@@ -4,11 +4,9 @@ import 'package:ditonton/domain/entities/movie.dart';
 import 'package:ditonton/presentation/pages/movie_detail_page.dart';
 import 'package:ditonton/presentation/pages/popular_movies_page.dart';
 import 'package:ditonton/presentation/pages/top_rated_movies_page.dart';
-import 'package:ditonton/presentation/provider/movie_list_notifier.dart';
-import 'package:ditonton/common/state_enum.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import '../cubit/movie_list/movie_list_cubit.dart';
 
@@ -40,6 +38,12 @@ class _HomeMoviePageState extends State<HomeMoviePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // IconButton(
+            //   onPressed: () {
+            //     FirebaseCrashlytics.instance.crash();
+            //   },
+            //   icon: Icon(Icons.search),
+            // ),
             Text(
               'Now Playing',
               style: kHeading6,
