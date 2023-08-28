@@ -1,30 +1,41 @@
-import 'package:ditonton/common/state_enum.dart';
-import 'package:ditonton/domain/entities/tv.dart';
-import 'package:ditonton/presentation/pages/popular_tv_page.dart';
 // import 'package:ditonton/domain/entities/movie.dart';
 // import 'package:ditonton/presentation/pages/popular_movies_page.dart';
-import 'package:ditonton/presentation/provider/popular_tv_notifier.dart';
+import 'package:bloc_test/bloc_test.dart';
+import 'package:ditonton/presentation/cubit/popular_tvs/popular_tvs_cubit.dart';
+import 'package:ditonton/presentation/pages/popular_tv_page.dart';
+import 'package:ditonton/presentation/widgets/tv_card_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-
-import 'popular_tv_page_test.mocks.dart';
-import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
+import 'package:mocktail/mocktail.dart';
+import '../../dummy_data/dummy_objects_tv.dart';
 
 // import 'popular_movies_page_test.mocks.dart';
 
-@GenerateMocks([PopularTVNotifier])
-void main() {
-  late MockPopularTVNotifier mockNotifier;
+class MockPopularTvsCubit extends MockCubit<PopularTvsState>
+    implements PopularTvsCubit {}
 
+class FakeLoadingPopularTvsState extends Fake
+    implements LoadingPopularTvsState {}
+
+class FakeLoadedPopularTvsState extends Fake implements LoadedPopularTvsState {}
+
+class FakeErrorPopularTvsState extends Fake implements ErrorPopularTvsState {}
+
+void main() {
+  late MockPopularTvsCubit mockCubit;
+  setUpAll(() {
+    registerFallbackValue(FakeLoadingPopularTvsState());
+    registerFallbackValue(FakeLoadedPopularTvsState());
+    registerFallbackValue(FakeErrorPopularTvsState());
+  });
   setUp(() {
-    mockNotifier = MockPopularTVNotifier();
+    mockCubit = MockPopularTvsCubit();
   });
 
   Widget _makeTestableWidget(Widget body) {
-    return ChangeNotifierProvider<PopularTVNotifier>.value(
-      value: mockNotifier,
+    return BlocProvider<PopularTvsCubit>(
+      create: (BuildContext context) => mockCubit,
       child: MaterialApp(
         home: body,
       ),
@@ -33,7 +44,12 @@ void main() {
 
   testWidgets('Page should display center progress bar when loading',
       (WidgetTester tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Loading);
+    final testData = LoadingPopularTvsState();
+
+    when(() => mockCubit.state).thenAnswer((_) => testData);
+    when(() => mockCubit.loadPopularTvs())
+        .thenAnswer((invocation) async => invocation);
+    whenListen(mockCubit, Stream.fromIterable([testData]));
 
     final progressBarFinder = find.byType(CircularProgressIndicator);
     final centerFinder = find.byType(Center);
@@ -44,24 +60,33 @@ void main() {
     expect(progressBarFinder, findsOneWidget);
   });
 
-  testWidgets('Page should display ListView when data is loaded',
+  testWidgets('Page should display ListView with TvCard when data is loaded',
       (WidgetTester tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Loaded);
-    when(mockNotifier.tv).thenReturn(<TV>[]);
+    final testData = LoadedPopularTvsState(
+      [testTv],
+    );
+    when(() => mockCubit.state).thenAnswer((_) => testData);
+    when(() => mockCubit.loadPopularTvs())
+        .thenAnswer((invocation) async => invocation);
+    whenListen(mockCubit, Stream.fromIterable([testData]));
 
     final listViewFinder = find.byType(ListView);
+    final tvCardFinder = find.byType(TVCard);
 
     await tester.pumpWidget(_makeTestableWidget(PopularTVPage()));
 
     expect(listViewFinder, findsOneWidget);
+    expect(tvCardFinder, findsWidgets);
   });
 
   testWidgets('Page should display text with message when Error',
       (WidgetTester tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Error);
-    when(mockNotifier.message).thenReturn('Error message');
-
-    final textFinder = find.byKey(Key('error_message'));
+    const testData = ErrorPopularTvsState('cannot connect');
+    when(() => mockCubit.state).thenAnswer((_) => testData);
+    when(() => mockCubit.loadPopularTvs())
+        .thenAnswer((invocation) async => invocation);
+    whenListen(mockCubit, Stream.fromIterable([testData]));
+    final textFinder = find.byKey(const Key('error_message'));
 
     await tester.pumpWidget(_makeTestableWidget(PopularTVPage()));
 

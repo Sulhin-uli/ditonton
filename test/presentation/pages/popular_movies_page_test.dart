@@ -1,26 +1,40 @@
-import 'package:ditonton/common/state_enum.dart';
-import 'package:ditonton/domain/entities/movie.dart';
+import 'package:bloc_test/bloc_test.dart';
+import 'package:ditonton/presentation/cubit/popular_movies/popular_movies_cubit.dart';
 import 'package:ditonton/presentation/pages/popular_movies_page.dart';
-import 'package:ditonton/presentation/provider/popular_movies_notifier.dart';
+import 'package:ditonton/presentation/widgets/movie_card_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
+import 'package:mocktail/mocktail.dart';
 
-import 'popular_movies_page_test.mocks.dart';
+import '../../dummy_data/dummy_objects.dart';
 
-@GenerateMocks([PopularMoviesNotifier])
+class MockPopularMoviesCubit extends MockCubit<PopularMoviesState>
+    implements PopularMoviesCubit {}
+
+class FakeLoadingPopularMoviesState extends Fake
+    implements LoadingPopularMoviesState {}
+
+class FakeLoadedPopularMoviesState extends Fake
+    implements LoadedPopularMoviesState {}
+
+class FakeErrorPopularMoviesState extends Fake
+    implements ErrorPopularMoviesState {}
+
 void main() {
-  late MockPopularMoviesNotifier mockNotifier;
-
+  late MockPopularMoviesCubit mockCubit;
+  setUpAll(() {
+    registerFallbackValue(FakeLoadingPopularMoviesState());
+    registerFallbackValue(FakeLoadedPopularMoviesState());
+    registerFallbackValue(FakeErrorPopularMoviesState());
+  });
   setUp(() {
-    mockNotifier = MockPopularMoviesNotifier();
+    mockCubit = MockPopularMoviesCubit();
   });
 
   Widget _makeTestableWidget(Widget body) {
-    return ChangeNotifierProvider<PopularMoviesNotifier>.value(
-      value: mockNotifier,
+    return BlocProvider<PopularMoviesCubit>(
+      create: (BuildContext context) => mockCubit,
       child: MaterialApp(
         home: body,
       ),
@@ -29,7 +43,12 @@ void main() {
 
   testWidgets('Page should display center progress bar when loading',
       (WidgetTester tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Loading);
+    final testData = LoadingPopularMoviesState();
+
+    when(() => mockCubit.state).thenAnswer((_) => testData);
+    when(() => mockCubit.loadPopularMovies())
+        .thenAnswer((invocation) async => invocation);
+    whenListen(mockCubit, Stream.fromIterable([testData]));
 
     final progressBarFinder = find.byType(CircularProgressIndicator);
     final centerFinder = find.byType(Center);
@@ -40,24 +59,33 @@ void main() {
     expect(progressBarFinder, findsOneWidget);
   });
 
-  testWidgets('Page should display ListView when data is loaded',
+  testWidgets('Page should display ListView with MovieCard when data is loaded',
       (WidgetTester tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Loaded);
-    when(mockNotifier.movies).thenReturn(<Movie>[]);
+    final testData = LoadedPopularMoviesState(
+      [testMovie],
+    );
+    when(() => mockCubit.state).thenAnswer((_) => testData);
+    when(() => mockCubit.loadPopularMovies())
+        .thenAnswer((invocation) async => invocation);
+    whenListen(mockCubit, Stream.fromIterable([testData]));
 
     final listViewFinder = find.byType(ListView);
+    final movieCardFinder = find.byType(MovieCard);
 
     await tester.pumpWidget(_makeTestableWidget(PopularMoviesPage()));
 
     expect(listViewFinder, findsOneWidget);
+    expect(movieCardFinder, findsWidgets);
   });
 
   testWidgets('Page should display text with message when Error',
       (WidgetTester tester) async {
-    when(mockNotifier.state).thenReturn(RequestState.Error);
-    when(mockNotifier.message).thenReturn('Error message');
-
-    final textFinder = find.byKey(Key('error_message'));
+    const testData = ErrorPopularMoviesState('cannot connect');
+    when(() => mockCubit.state).thenAnswer((_) => testData);
+    when(() => mockCubit.loadPopularMovies())
+        .thenAnswer((invocation) async => invocation);
+    whenListen(mockCubit, Stream.fromIterable([testData]));
+    final textFinder = find.byKey(const Key('error_message'));
 
     await tester.pumpWidget(_makeTestableWidget(PopularMoviesPage()));
 
