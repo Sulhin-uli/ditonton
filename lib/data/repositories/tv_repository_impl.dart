@@ -28,6 +28,8 @@ class TvRepositoryImpl implements TVRepository {
       return Left(ServerFailure(''));
     } on SocketException {
       return Left(ConnectionFailure('Failed to connect to the network'));
+    } on TlsException catch (e) {
+      return Left(ServerFailure('Certificated not valid\n${e.message}'));
     }
   }
 
@@ -40,6 +42,8 @@ class TvRepositoryImpl implements TVRepository {
       return Left(ServerFailure(''));
     } on SocketException {
       return Left(ConnectionFailure('Failed to connect to the network'));
+    } on TlsException catch (e) {
+      return Left(ServerFailure('Certificated not valid\n${e.message}'));
     }
   }
 
@@ -52,6 +56,8 @@ class TvRepositoryImpl implements TVRepository {
       return Left(ServerFailure(''));
     } on SocketException {
       return Left(ConnectionFailure('Failed to connect to the network'));
+    } on TlsException catch (e) {
+      return Left(ServerFailure('Certificated not valid\n${e.message}'));
     }
   }
 
@@ -64,6 +70,8 @@ class TvRepositoryImpl implements TVRepository {
       return Left(ServerFailure(''));
     } on SocketException {
       return Left(ConnectionFailure('Failed to connect to the network'));
+    } on TlsException catch (e) {
+      return Left(ServerFailure('Certificated not valid\n${e.message}'));
     }
   }
 
@@ -76,6 +84,8 @@ class TvRepositoryImpl implements TVRepository {
       return Left(ServerFailure(''));
     } on SocketException {
       return Left(ConnectionFailure('Failed to connect to the network'));
+    } on TlsException catch (e) {
+      return Left(ServerFailure('Certificated not valid\n${e.message}'));
     }
   }
 
@@ -88,6 +98,8 @@ class TvRepositoryImpl implements TVRepository {
       return Left(ServerFailure(''));
     } on SocketException {
       return Left(ConnectionFailure('Failed to connect to the network'));
+    } on TlsException catch (e) {
+      return Left(ServerFailure('Certificated not valid\n${e.message}'));
     }
   }
 
@@ -99,6 +111,8 @@ class TvRepositoryImpl implements TVRepository {
       return Right(result);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));
+    } on TlsException catch (e) {
+      return Left(ServerFailure('Certificated not valid\n${e.message}'));
     } catch (e) {
       throw e;
     }
@@ -112,6 +126,8 @@ class TvRepositoryImpl implements TVRepository {
       return Right(result);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));
+    } on TlsException catch (e) {
+      return Left(ServerFailure('Certificated not valid\n${e.message}'));
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:ditonton/common/constants.dart';
+import 'package:ditonton/common/http_ssl_pinning.dart';
 import 'package:ditonton/common/utils.dart';
 import 'package:ditonton/presentation/bloc/search_movies/search_movies_bloc.dart';
 import 'package:ditonton/presentation/bloc/search_tv/search_tvs_bloc.dart';
@@ -39,6 +40,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await HttpSSLPinning.init();
   di.init();
   runApp(MyApp());
 }

@@ -1,13 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:ditonton/common/exception.dart';
 import 'package:ditonton/data/models/tv_detail_model.dart';
 import 'package:ditonton/data/models/tv_model.dart';
 import 'package:ditonton/data/models/tv_response.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
-
-import '../../common/secure_client.dart';
 
 abstract class TVRemoteDataSource {
   Future<List<TvModel>> getPopularTV();
@@ -28,13 +24,8 @@ class TVRemoteDataSourceImpl implements TVRemoteDataSource {
 
   @override
   Future<List<TvModel>> getPopularTV() async {
-    HttpClient client = HttpClient(context: await globalContext);
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient ioClient = IOClient(client);
-
     final response =
-        await ioClient.get(Uri.parse('$BASE_URL/tv/popular?$API_KEY'));
+        await client.get(Uri.parse('$BASE_URL/tv/popular?$API_KEY'));
 
     if (response.statusCode == 200) {
       return TVResponse.fromJson(json.decode(response.body)).tvList;
@@ -45,12 +36,7 @@ class TVRemoteDataSourceImpl implements TVRemoteDataSource {
 
   @override
   Future<TvDetailResponse> getTvDetail(int id) async {
-    HttpClient client = HttpClient(context: await globalContext);
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient ioClient = IOClient(client);
-
-    final response = await ioClient.get(Uri.parse('$BASE_URL/tv/$id?$API_KEY'));
+    final response = await client.get(Uri.parse('$BASE_URL/tv/$id?$API_KEY'));
 
     if (response.statusCode == 200) {
       return TvDetailResponse.fromJson(json.decode(response.body));
@@ -61,12 +47,7 @@ class TVRemoteDataSourceImpl implements TVRemoteDataSource {
 
   @override
   Future<List<TvModel>> getTvRecommendations(int id) async {
-    HttpClient client = HttpClient(context: await globalContext);
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient ioClient = IOClient(client);
-
-    final response = await ioClient
+    final response = await client
         .get(Uri.parse('$BASE_URL/tv/$id/recommendations?$API_KEY'));
 
     if (response.statusCode == 200) {
@@ -78,13 +59,8 @@ class TVRemoteDataSourceImpl implements TVRemoteDataSource {
 
   @override
   Future<List<TvModel>> getTopRatedTV() async {
-    HttpClient client = HttpClient(context: await globalContext);
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient ioClient = IOClient(client);
-
     final response =
-        await ioClient.get(Uri.parse('$BASE_URL/tv/top_rated?$API_KEY'));
+        await client.get(Uri.parse('$BASE_URL/tv/top_rated?$API_KEY'));
 
     if (response.statusCode == 200) {
       return TVResponse.fromJson(json.decode(response.body)).tvList;
@@ -95,13 +71,8 @@ class TVRemoteDataSourceImpl implements TVRemoteDataSource {
 
   @override
   Future<List<TvModel>> getNowPlayingTV() async {
-    HttpClient client = HttpClient(context: await globalContext);
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient ioClient = IOClient(client);
-
     final response =
-        await ioClient.get(Uri.parse('$BASE_URL/tv/on_the_air?$API_KEY'));
+        await client.get(Uri.parse('$BASE_URL/tv/on_the_air?$API_KEY'));
 
     if (response.statusCode == 200) {
       return TVResponse.fromJson(json.decode(response.body)).tvList;
@@ -112,12 +83,7 @@ class TVRemoteDataSourceImpl implements TVRemoteDataSource {
 
   @override
   Future<List<TvModel>> searchTv(String query) async {
-    HttpClient client = HttpClient(context: await globalContext);
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient ioClient = IOClient(client);
-
-    final response = await ioClient
+    final response = await client
         .get(Uri.parse('$BASE_URL/search/tv?$API_KEY&query=$query'));
 
     if (response.statusCode == 200) {
