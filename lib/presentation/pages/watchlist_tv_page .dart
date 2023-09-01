@@ -1,3 +1,4 @@
+import 'package:ditonton/common/utils.dart';
 import 'package:ditonton/presentation/cubit/watchlist_tvs/watchlist_tvs_cubit.dart';
 import 'package:ditonton/presentation/widgets/tv_card_list.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +13,29 @@ class WatchlistTvPage extends StatefulWidget {
   _WatchlistTvPageState createState() => _WatchlistTvPageState();
 }
 
-class _WatchlistTvPageState extends State<WatchlistTvPage> {
+class _WatchlistTvPageState extends State<WatchlistTvPage> with RouteAware {
   @override
   void initState() {
     super.initState();
     Future.microtask(
       () => context.read<WatchlistTvsCubit>().loadWatchlistTvs(),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  void didPopNext() {
+    context.read<WatchlistTvsCubit>().loadWatchlistTvs();
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 
   @override

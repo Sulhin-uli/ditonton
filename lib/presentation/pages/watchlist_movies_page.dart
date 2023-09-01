@@ -25,15 +25,26 @@ class _WatchlistMoviesPageState extends State<WatchlistMoviesPage>
     );
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  void didPopNext() {
+    context.read<WatchlistMoviesCubit>().loadWatchlistMovies();
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
   // @override
   // void didChangeDependencies() {
   //   super.didChangeDependencies();
   //   routeObserver.subscribe(this, ModalRoute.of(context)!);
-  // }
-
-  // void didPopNext() {
-  //   Provider.of<WatchlistMovieNotifier>(context, listen: false)
-  //       .fetchWatchlistMovies();
   // }
 
   @override
@@ -78,6 +89,14 @@ class _WatchlistMoviesPageState extends State<WatchlistMoviesPage>
             );
           }
           if (state is LoadedWatchlistMoviesState) {
+            if (state.movies.isEmpty) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text("you don't have any watchlist yet"),
+                ),
+              );
+            }
             return ListView.builder(
               itemBuilder: (context, index) {
                 final movie = state.movies[index];
@@ -94,9 +113,9 @@ class _WatchlistMoviesPageState extends State<WatchlistMoviesPage>
     );
   }
 
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   routeObserver.unsubscribe(this);
+  //   super.dispose();
+  // }
 }
